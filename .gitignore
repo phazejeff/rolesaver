@@ -1,2 +1,4 @@
 /.env
 /__pycache__
+/database/tables/__pycache__
+/database/__pycache__
