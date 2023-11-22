@@ -2,11 +2,7 @@ from __future__ import annotations
 from typing import Set
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy.types import BigInteger
-from .Roles import Role
-from .Base import Base
-from .Nickname import Nickname
-from .UserRoles import userroles
-from .UserNickname import usernicknames
+from . import Role, Base, Nickname, userroles, usernicknames
 
 class User(Base):
     __tablename__ = "Users"

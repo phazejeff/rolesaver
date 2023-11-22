@@ -1,7 +1,7 @@
 from __future__ import annotations
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import BigInteger, VARCHAR
-from .Base import Base
+from . import Base
 
 class Nickname(Base):
     __tablename__ = "Nicknames"

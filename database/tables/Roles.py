@@ -1,7 +1,7 @@
 from __future__ import annotations
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import BigInteger
-from .Base import Base
+from . import Base
 
 class Role(Base):
     __tablename__ = "Roles"
