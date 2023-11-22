@@ -4,7 +4,7 @@ import os
 from typing import List
 from discord import Member
 from dotenv import load_dotenv
-from .tables import Role, User, Base, userroles
+from .tables import Role, User, Nickname, Base, userroles, usernicknames
 load_dotenv()
 
 class Database:
@@ -36,20 +36,29 @@ class Database:
                 roles.add(r)
 
         user.roles = roles
-        
+
+        nickname = session.query(Nickname).filter_by(discord_server_id=member.guild.id).first()
+        if nickname:
+            nickname.nickname = member.nick
+        else:
+            nickname = Nickname(member.guild.id, member.nick)
+            session.add(nickname)
+        user.nickname = nickname
+
         session.commit()
 
     def _fetch_member(self, session: Session, member: Member) -> User | None:
         stmt = (
             select(User)
+            .where(User.discord_id == member.id)
             .join(User.roles)
             .filter(Role.discord_server_id == member.guild.id)
             .options(contains_eager(User.roles))
-
         )
 
         r = session.execute(stmt)
         user = r.unique().first()
+        print(user)
 
         if not user:
             return None
@@ -59,5 +68,3 @@ class Database:
     def fetch_member(self, member: Member) -> User | None:
         session = Session(self.engine)
         return self._fetch_member(session, member)
-
-

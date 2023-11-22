@@ -3,6 +3,7 @@ from discord import Member
 
 async def _on_member_join(database: Database, member: Member):
     user = database.fetch_member(member)
+    await member.edit(nick=user.nickname.nickname)
 
     roles = []
     for role in user.roles:
