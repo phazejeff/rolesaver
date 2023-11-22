@@ -2,9 +2,9 @@ from sqlalchemy import create_engine, select, delete
 from sqlalchemy.orm import Session, contains_eager
 import os
 from typing import List
-from discord import Member
+import discord
 from dotenv import load_dotenv
-from .tables import Role, User, Nickname, Base, userroles, usernicknames
+from .tables import Role, User, Nickname, Base, Blacklist, userroles, usernicknames
 load_dotenv()
 
 class Database:
@@ -17,7 +17,7 @@ class Database:
 
         Base.metadata.create_all(self.engine)
 
-    def upsert_member(self, member: Member):
+    def upsert_member(self, member: discord.Member):
         session = Session(self.engine)
         user = self._fetch_member(session, member)
 
@@ -47,7 +47,7 @@ class Database:
 
         session.commit()
 
-    def _fetch_member(self, session: Session, member: Member) -> User | None:
+    def _fetch_member(self, session: Session, member: discord.Member) -> User | None:
         stmt = (
             select(User)
             .where(User.discord_id == member.id)
@@ -65,6 +65,48 @@ class Database:
         else:
             return user[0]
         
-    def fetch_member(self, member: Member) -> User | None:
+    def fetch_member(self, member: discord.Member) -> User | None:
         session = Session(self.engine)
         return self._fetch_member(session, member)
+
+    def _fetch_blacklist(self, session: Session, guild: discord.Guild) -> Blacklist | None:
+        stmt = (
+            select(Blacklist)
+            .where(Blacklist.discord_server_id == guild.id)
+        )
+
+        r = session.execute(stmt)
+        blacklist = r.first()
+
+        if not blacklist:
+            return None
+        else:
+            return blacklist[0]
+
+    def fetch_blacklist(self, guild: discord.Guild) -> Blacklist | None:
+        session = Session(self.engine)
+        return self._fetch_blacklist(session, guild)
+    
+    def insert_or_remove_into_blacklist(self, guild: discord.Guild, role: discord.Role) -> bool:
+        session = Session(self.engine)
+        blacklist = self._fetch_blacklist(session, guild)
+
+        if not blacklist:
+            blacklist = Blacklist(guild.id)
+            session.add(blacklist)
+
+        r = session.query(Role).filter_by(discord_role_id=role.id).first()
+        if not r:
+            r = Role(guild.id, role.id)
+            session.add(r)
+        
+        added = True
+        if r in blacklist.roles:
+            blacklist.roles.remove(r)
+            added = False
+        else:
+            blacklist.roles.add(r)
+
+        session.commit()
+
+        return added
