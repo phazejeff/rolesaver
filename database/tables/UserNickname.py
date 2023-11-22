@@ -1,6 +1,6 @@
 from __future__ import annotations
 from sqlalchemy import Table, Column, ForeignKey
-from . import Base
+from .Base import Base
 
 usernicknames = Table(
     "usernicknames",
