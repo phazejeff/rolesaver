@@ -23,3 +23,5 @@ class RoleSaver(discord.AutoShardedClient):
     def run(self):
         token = os.environ["DISCORD_TOKEN"]
         super().run(token)
+
+rolesaver = RoleSaver()
