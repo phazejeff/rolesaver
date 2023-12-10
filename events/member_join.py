@@ -1,8 +1,10 @@
 from database.database import Database
 from discord import Member
+from bot import rolesaver
 
-async def _on_member_join(database: Database, member: Member):
-    user = database.fetch_member(member)
+@rolesaver.event()
+async def on_member_join(member: Member):
+    user = rolesaver.database.fetch_member(member)
     await member.edit(nick=user.nickname.nickname)
 
     roles = []

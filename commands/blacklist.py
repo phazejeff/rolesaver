@@ -3,7 +3,7 @@ import discord
 from typing import Optional
 from bot import rolesaver
 
-@rolesaver.tree.command(description="View current blacklist, or add/remove a role to the blacklist.")
+@rolesaver.tree.command(name="blacklist", description="View current blacklist, or add/remove a role to the blacklist.")
 @discord.app_commands.describe(role="Role to add/remove from blacklist. Leave blank to view current blacklist.")
 async def blacklist(interaction: discord.Interaction, role: Optional[discord.Role]):
     if role:
@@ -16,7 +16,9 @@ async def blacklist(interaction: discord.Interaction, role: Optional[discord.Rol
     else:
         blacklistdb = rolesaver.database.fetch_blacklist(interaction.guild)
         if not blacklistdb or blacklistdb.roles == None or len(blacklistdb.roles) == 0:
-            cid = interaction.data.get("id")
+            command: discord.app_commands.AppCommand = await rolesaver.fetch_command_from_guild("blacklist", interaction.guild)
+            cid = command.id
+
             await interaction.response.send_message(f"Blacklist is empty! Use </blacklist:{cid}> and add a role to add to the blacklist.")
         else:
             roles_str = ""

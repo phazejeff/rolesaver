@@ -1,24 +1,32 @@
 import discord
 import os
 from database.database import Database
-from events import _on_member_remove, _on_member_join
 
 intents = discord.Intents.default()
 intents.members = True
+intents.message_content = True
 
 class RoleSaver(discord.AutoShardedClient):
     def __init__(self):
         super().__init__(intents=intents)
         self.database = Database()
+        self.tree = discord.app_commands.CommandTree(self)
+
+    # copies global commands to test server instantly
+    async def setup_hook(self):
+        GUILD = discord.Object(id=1094848126948491297)
+        self.tree.clear_commands(guild=GUILD)
+        self.tree.copy_global_to(guild=GUILD)
+        await self.tree.sync(guild=GUILD)
     
     async def on_ready(self):
         print("Logged in as: " + self.user.name)
 
-    async def on_member_remove(self, member: discord.Member):
-        await _on_member_remove(self.database, member)
-    
-    async def on_member_join(self, member):
-        await _on_member_join(self.database, member)
+    async def fetch_command_from_guild(name: str, guild: discord.Guild) -> discord.app_commands.AppCommand:
+        commands = await rolesaver.tree.fetch_commands(guild=guild)
+        for c in commands:
+            if c.name == name:
+                return c
 
     def run(self):
         token = os.environ["DISCORD_TOKEN"]
