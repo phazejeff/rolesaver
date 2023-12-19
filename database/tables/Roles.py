@@ -16,3 +16,12 @@ class Role(Base):
 
     def __repr__(self):
         return f"Roles(id={self.id}, discord_server_id={self.discord_server_id}, discord_role_id={self.discord_role_id})"
+    
+    # Overrides default equality so that testing if in set works correctly
+    def __eq__(self, other):
+        if isinstance(other, Role):
+            return self.id == other.id and self.discord_role_id == other.discord_role_id and self.discord_server_id == other.discord_server_id
+        return False
+    
+    def __hash__(self):
+        return self.id
