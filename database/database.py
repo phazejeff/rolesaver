@@ -58,7 +58,6 @@ class Database:
 
         r = session.execute(stmt)
         user = r.unique().first()
-        print(user)
 
         if not user:
             return None
@@ -110,3 +109,10 @@ class Database:
         session.commit()
 
         return added
+    
+    def switch_list(self, guild):
+        session = Session(self.engine)
+        blacklist = self._fetch_blacklist(session, guild)
+        blacklist.roles.clear()
+        blacklist.is_blacklist = not blacklist.is_blacklist
+        session.commit()

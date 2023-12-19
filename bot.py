@@ -22,8 +22,8 @@ class RoleSaver(discord.AutoShardedClient):
     async def on_ready(self):
         print("Logged in as: " + self.user.name)
 
-    async def fetch_command_from_guild(name: str, guild: discord.Guild) -> discord.app_commands.AppCommand:
-        commands = await rolesaver.tree.fetch_commands(guild=guild)
+    async def fetch_command_by_name(self, name: str, guild: discord.Guild) -> discord.app_commands.AppCommand:
+        commands = await self.tree.fetch_commands(guild=guild)
         for c in commands:
             if c.name == name:
                 return c
