@@ -4,6 +4,9 @@ from bot import rolesaver
 
 async def restore_member(member: Member):
     user = rolesaver.database.fetch_member(member)
+    if not user: # user does not exist / has never joined the server before
+        return
+    
     await member.edit(nick=user.nickname.nickname)
     blacklist = rolesaver.database.fetch_blacklist(member.guild)
 
