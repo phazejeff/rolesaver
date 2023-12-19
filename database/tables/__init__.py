@@ -3,6 +3,7 @@ from .Roles import Role
 from .Users import User
 from .Nickname import Nickname
 from .Blacklist import Blacklist
+from .Log import Log
 from .UserRoles import userroles
 from .UserNickname import usernicknames
 from .BlacklistRoles import blacklistroles

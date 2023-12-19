@@ -4,7 +4,7 @@ import os
 from typing import List
 import discord
 from dotenv import load_dotenv
-from .tables import Role, User, Nickname, Base, Blacklist, userroles, usernicknames
+from .tables import Role, User, Nickname, Base, Blacklist, Log, userroles, usernicknames
 load_dotenv()
 
 class Database:
@@ -115,6 +115,41 @@ class Database:
         blacklist = self._fetch_blacklist(session, guild)
         blacklist.roles.clear()
         blacklist.is_blacklist = not blacklist.is_blacklist
+        session.commit()
+
+    def _fetch_log(self, session: Session, guild: discord.Guild) -> Log:
+        stmt = (
+            select(Log)
+            .where(Log.discord_server_id == guild.id)
+        )
+
+        r = session.execute(stmt)
+        log = r.first()
+        if not log:
+            log = Log(guild.id)
+            session.add(log)
+            session.commit()
+            return log
+        else:
+            return log[0]
+        
+    def fetch_log(self, guild: discord.Guild):
+        session = Session(self.engine)
+        return self._fetch_log(session, guild)
+    
+    def disable_logging(self, guild: discord.Guild):
+        session = Session(self.engine)
+        log = self._fetch_log(session, guild)
+        log.is_logging = False
+
+        session.commit()
+    
+    def enable_logging(self, guild: discord.Guild, channel: discord.TextChannel):
+        session = Session(self.engine)
+        log = self._fetch_log(session, guild)
+        log.log_channel = channel.id
+        log.is_logging = True
+
         session.commit()
 
     def user_count(self):
