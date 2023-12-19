@@ -2,8 +2,7 @@ from database.database import Database
 from discord import Member
 from bot import rolesaver
 
-@rolesaver.event
-async def on_member_join(member: Member):
+async def restore_member(member: Member):
     user = rolesaver.database.fetch_member(member)
     await member.edit(nick=user.nickname.nickname)
     blacklist = rolesaver.database.fetch_blacklist(member.guild)
@@ -20,3 +19,7 @@ async def on_member_join(member: Member):
             roles.append(role)
     
     await member.add_roles(*roles)
+
+@rolesaver.event
+async def on_member_join(member: Member):
+    await restore_member(member)
