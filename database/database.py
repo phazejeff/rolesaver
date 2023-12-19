@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, select, delete
+from sqlalchemy import create_engine, select, delete, func, column
 from sqlalchemy.orm import Session, contains_eager
 import os
 from typing import List
@@ -116,3 +116,25 @@ class Database:
         blacklist.roles.clear()
         blacklist.is_blacklist = not blacklist.is_blacklist
         session.commit()
+
+    def user_count(self):
+        session = Session(self.engine)
+        return session.query(func.count(User.id)).scalar()
+    
+    def role_count(self):
+        session = Session(self.engine)
+        return session.query(func.count(Role.id)).scalar()
+    
+    # since every user gets nickname saved, even if null, this is an accurate count for members
+    def nickname_count(self):
+        session = Session(self.engine)
+        return session.query(func.count()).select_from(usernicknames).scalar()
+    
+    def member_count(self, guild: discord.Guild):
+        session = Session(self.engine)
+        return session.query(func.count()).select_from(User).join(User.nickname).where(Nickname.discord_server_id == guild.id).scalar()
+    
+    def guild_role_count(self, guild: discord.Guild):
+        session = Session(self.engine)
+        return session.query(func.count()).select_from(Role).where(Role.discord_server_id == guild.id).scalar()
+    
