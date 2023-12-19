@@ -13,5 +13,6 @@ async def attempt_forcesave(interaction:discord.Interaction, member: discord.Mem
 @rolesaver.tree.command(name="forcesave", description="Saves a user right now, as if they left the server.")
 @discord.app_commands.describe(member="User to save")
 @discord.app_commands.rename(member="user")
+@discord.app_commands.default_permissions(manage_roles=True)
 async def forcesave(interaction: discord.Interaction, member: discord.Member):
     await attempt_forcesave(interaction, member)

@@ -13,5 +13,6 @@ async def attempt_forcerestore(interaction: discord.Interaction, member: discord
 @rolesaver.tree.command(name="forcerestore", description="Restores a user's roles right now, as if they joined the server.")
 @discord.app_commands.describe(member="User to restore")
 @discord.app_commands.rename(member="user")
+@discord.app_commands.default_permissions(manage_roles=True)
 async def forcerestore(interaction: discord.Interaction, member: discord.Member):
     await attempt_forcerestore(interaction, member)

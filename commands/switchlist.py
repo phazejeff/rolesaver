@@ -3,6 +3,7 @@ from bot import rolesaver
 from views.SwitchlistConfirm import SwitchlistConfirm
 
 @rolesaver.tree.command(description="Switches blacklist to whitelist or vice verse. Will clear current list.")
+@discord.app_commands.default_permissions(manage_guild=True)
 async def switchlist(interaction: discord.Interaction):
     blacklist = rolesaver.database.fetch_blacklist(interaction.guild)
 
