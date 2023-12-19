@@ -1,5 +1,6 @@
+import time
 from database.database import Database
-from discord import Member
+from discord import Member, TextChannel
 from bot import rolesaver
 
 async def restore_member(member: Member):
@@ -22,6 +23,12 @@ async def restore_member(member: Member):
             roles.append(role)
     
     await member.add_roles(*roles)
+
+    log = rolesaver.database.fetch_log(member.guild)
+    if log.is_logging:
+        current = round(time.time())
+        channel: TextChannel = member.guild.get_channel_or_thread(log.log_channel)
+        await channel.send(f"<t:{current}:R> {member.name}'s roles have been restored.")
 
 @rolesaver.event
 async def on_member_join(member: Member):
