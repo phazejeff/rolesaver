@@ -2,7 +2,7 @@ import discord
 from bot import rolesaver
 from events.member_remove import save_member
 
-async def attempt_forcesave(interaction:discord.INteraction, member: discord.Member):
+async def attempt_forcesave(interaction:discord.Interaction, member: discord.Member):
     try:
         await save_member(member)
         await interaction.response.send_message(member.name + " has been saved successfully.")
