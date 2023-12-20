@@ -1,7 +1,6 @@
-from sqlalchemy import create_engine, select, delete, func, column
+from sqlalchemy import create_engine, select, func
 from sqlalchemy.orm import Session, contains_eager
 import os
-from typing import List
 import discord
 from dotenv import load_dotenv
 from .tables import Role, User, Nickname, Base, Blacklist, Log, userroles, usernicknames

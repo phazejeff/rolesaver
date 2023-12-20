@@ -1,5 +1,4 @@
 import time
-from database.database import Database
 from discord import Member, TextChannel
 from bot import rolesaver
 
