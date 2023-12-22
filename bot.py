@@ -14,10 +14,11 @@ class RoleSaver(discord.AutoShardedClient):
 
     # copies global commands to test server instantly
     async def setup_hook(self):
-        GUILD = discord.Object(id=1094848126948491297)
-        self.tree.clear_commands(guild=GUILD)
-        self.tree.copy_global_to(guild=GUILD)
-        await self.tree.sync(guild=GUILD)
+        # GUILD = discord.Object(id=1094848126948491297)
+        # self.tree.clear_commands(guild=GUILD)
+        # self.tree.copy_global_to(guild=GUILD)
+        # await self.tree.sync(guild=GUILD)
+        await self.tree.sync()
     
     async def on_ready(self):
         print("Logged in as: " + self.user.name)
