@@ -25,7 +25,7 @@ services:
       - MYSQL_ROOT_PASSWORD= # use same password as above
       - MYSQL_DATABASE=rolesaver
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"] # make sure the ip here is the same as MYSQL_HOST. This likes to be 127.0.0.1 if running locally.
       timeout: 20s
       retries: 10
     ports:
