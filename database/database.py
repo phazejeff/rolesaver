@@ -127,7 +127,6 @@ class Database:
         if not log:
             log = Log(guild.id)
             session.add(log)
-            session.commit()
             return log
         else:
             return log[0]
