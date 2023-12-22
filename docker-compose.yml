@@ -3,7 +3,7 @@ version: '3.8'
 services:
   app:
     container_name: rolesaver_discord_bot
-    image: phazejeff/rolesaver:latest
+    image: phazejeff/rolesaver:main
     environment:
       - DISCORD_TOKEN= # add discord token
       - MYSQL_HOST=127.0.0.1
