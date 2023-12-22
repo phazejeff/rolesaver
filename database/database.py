@@ -46,7 +46,7 @@ class Database:
 
         session.commit()
 
-    def _fetch_member(self, session: Session, member: discord.Member) -> User | None:
+    def _fetch_member(self, session: Session, member: discord.Member) -> User:
         stmt = (
             select(User)
             .where(User.discord_id == member.id)
@@ -59,15 +59,17 @@ class Database:
         user = r.unique().first()
 
         if not user:
-            return None
+            user = User(member.id)
+            session.add(user)
+            return user
         else:
             return user[0]
         
-    def fetch_member(self, member: discord.Member) -> User | None:
+    def fetch_member(self, member: discord.Member) -> User:
         session = Session(self.engine)
         return self._fetch_member(session, member)
 
-    def _fetch_blacklist(self, session: Session, guild: discord.Guild) -> Blacklist | None:
+    def _fetch_blacklist(self, session: Session, guild: discord.Guild) -> Blacklist:
         stmt = (
             select(Blacklist)
             .where(Blacklist.discord_server_id == guild.id)
@@ -77,11 +79,13 @@ class Database:
         blacklist = r.first()
 
         if not blacklist:
-            return None
+            blacklist = Blacklist(guild.id)
+            session.add(blacklist)
+            return blacklist
         else:
             return blacklist[0]
 
-    def fetch_blacklist(self, guild: discord.Guild) -> Blacklist | None:
+    def fetch_blacklist(self, guild: discord.Guild) -> Blacklist:
         session = Session(self.engine)
         return self._fetch_blacklist(session, guild)
     
