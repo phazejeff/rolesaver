@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session, contains_eager
 import os
 import discord
 from dotenv import load_dotenv
-from .tables import Role, User, Nickname, Base, Blacklist, Log, userroles, usernicknames
+from database.tables import Role, User, Nickname, Base, Blacklist, Log, userroles, usernicknames
 load_dotenv()
 
 class Database:
