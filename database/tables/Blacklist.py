@@ -16,6 +16,7 @@ class Blacklist(Base):
 
     def __init__(self, discord_server_id: int):
         self.discord_server_id = discord_server_id
+        self.is_blacklist = True
 
     def __repr__(self):
         return f"Blacklist(id={self.id}, discord_server_id={self.discord_server_id}, is_blacklist={self.is_blacklist}, roles={self.roles})"
