@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: rolesaver_discord_bot
+    image: phazejeff/rolesaver:latest
+    environment:
+      - DISCORD_TOKEN= # add discord token
+      - MYSQL_HOST=127.0.0.1
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD= # create password
+      - MYSQL_DATABASE=rolesaver
+    
+    # if using an external mysql database, comment out everything below this line.
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - rolesaver-network
+
+  mysql:
+    container_name: rolesaver_db
+    image: mysql:latest
+    volumes:
+      - data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD= # use same password as above
+      - MYSQL_DATABASE=rolesaver
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      timeout: 20s
+      retries: 10
+    ports:
+      - "3306:3306"
+    networks:
+      - rolesaver-network
+
+networks:
+  rolesaver-network:
+
+volumes:
+  data:
