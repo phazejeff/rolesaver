@@ -15,8 +15,6 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    networks:
-      - rolesaver-network
 
   mysql:
     container_name: rolesaver_db
@@ -32,11 +30,6 @@ services:
       retries: 10
     ports:
       - "3306:3306"
-    networks:
-      - rolesaver-network
-
-networks:
-  rolesaver-network:
 
 volumes:
   data:
