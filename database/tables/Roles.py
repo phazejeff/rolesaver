@@ -24,4 +24,4 @@ class Role(Base):
         return False
     
     def __hash__(self):
-        return self.id
+        return self.discord_role_id
