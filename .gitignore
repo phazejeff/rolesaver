@@ -6,3 +6,5 @@
 /commands/__pycache__
 /views/__pycache__
 /context/__pycache__
+/migrate_db.py
+/db
