@@ -45,6 +45,7 @@ class Database:
         user.nickname = nickname
 
         session.commit()
+        session.close()
 
     def _fetch_member(self, session: Session, member: discord.Member) -> User:
         stmt = (
@@ -61,8 +62,10 @@ class Database:
         if not user:
             user = User(member.id)
             session.add(user)
+            session.close()
             return user
         else:
+            session.close()
             return user[0]
         
     def fetch_member(self, member: discord.Member) -> User:
@@ -81,8 +84,10 @@ class Database:
         if not blacklist:
             blacklist = Blacklist(guild.id)
             session.add(blacklist)
+            session.close()
             return blacklist
         else:
+            session.close()
             return blacklist[0]
 
     def fetch_blacklist(self, guild: discord.Guild) -> Blacklist:
@@ -110,6 +115,7 @@ class Database:
             blacklist.roles.add(r)
 
         session.commit()
+        session.close()
 
         return added
     
@@ -119,6 +125,7 @@ class Database:
         blacklist.roles.clear()
         blacklist.is_blacklist = not blacklist.is_blacklist
         session.commit()
+        session.close()
 
     def _fetch_log(self, session: Session, guild: discord.Guild) -> Log:
         stmt = (
@@ -131,8 +138,10 @@ class Database:
         if not log:
             log = Log(guild.id)
             session.add(log)
+            session.close()
             return log
         else:
+            session.close()
             return log[0]
         
     def fetch_log(self, guild: discord.Guild):
@@ -145,6 +154,7 @@ class Database:
         log.is_logging = False
 
         session.commit()
+        session.close()
     
     def enable_logging(self, guild: discord.Guild, channel: discord.TextChannel):
         session = Session(self.engine)
@@ -153,25 +163,36 @@ class Database:
         log.is_logging = True
 
         session.commit()
+        session.close()
 
     def user_count(self):
         session = Session(self.engine)
-        return session.query(func.count(User.id)).scalar()
+        count = session.query(func.count(User.id)).scalar()
+        session.close()
+        return count
     
     def role_count(self):
         session = Session(self.engine)
-        return session.query(func.count(Role.id)).scalar()
+        count = session.query(func.count(Role.id)).scalar()
+        session.close()
+        return count
     
     # since every user gets nickname saved, even if null, this is an accurate count for members
     def nickname_count(self):
         session = Session(self.engine)
-        return session.query(func.count()).select_from(usernicknames).scalar()
+        count = session.query(func.count()).select_from(usernicknames).scalar()
+        session.close()
+        return count
     
     def member_count(self, guild: discord.Guild):
         session = Session(self.engine)
-        return session.query(func.count()).select_from(User).join(User.nickname).where(Nickname.discord_server_id == guild.id).scalar()
+        count = session.query(func.count()).select_from(User).join(User.nickname).where(Nickname.discord_server_id == guild.id).scalar()
+        session.close()
+        return count
     
     def guild_role_count(self, guild: discord.Guild):
         session = Session(self.engine)
-        return session.query(func.count()).select_from(Role).where(Role.discord_server_id == guild.id).scalar()
+        count = session.query(func.count()).select_from(Role).where(Role.discord_server_id == guild.id).scalar()
+        session.close()
+        return count
     
