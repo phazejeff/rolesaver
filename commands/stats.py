@@ -3,9 +3,10 @@ from bot import rolesaver
 
 @rolesaver.tree.command(name="stats", description="Shows the bot's global and server stats")
 async def stats(interaction: discord.Interaction):
+    await interaction.response.defer(thinking=True)
     log = rolesaver.database.fetch_log(interaction.guild)
 
-    await interaction.response.send_message(f"""
+    await interaction.followup.send(f"""
 ## Global Stats
 Server Count: **{len(rolesaver.guilds)}**
 Members Saved: **{rolesaver.database.nickname_count()}**
