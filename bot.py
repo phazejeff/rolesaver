@@ -4,7 +4,6 @@ from database.database import Database
 
 intents = discord.Intents.default()
 intents.members = True
-intents.message_content = True
 
 class RoleSaver(discord.AutoShardedClient):
     def __init__(self):
