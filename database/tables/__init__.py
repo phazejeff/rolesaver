@@ -4,6 +4,7 @@ from .Users import User
 from .Nickname import Nickname
 from .Blacklist import Blacklist
 from .Log import Log
+from .Patreon import Patreon
 from .UserRoles import userroles
 from .UserNickname import usernicknames
 from .BlacklistRoles import blacklistroles
