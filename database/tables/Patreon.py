@@ -10,8 +10,8 @@ class Patreon(Base):
     discord_user_id: Mapped[int] = mapped_column(BigInteger())
     discord_server_id: Mapped[int] = mapped_column(BigInteger(), nullable=True)
 
-    def __init__(self, discord_server_id: int):
-        self.discord_server_id = discord_server_id
+    def __init__(self, discord_user_id: int):
+        self.discord_user_id = discord_user_id
 
     def __repr__(self):
         return f"Patreon(id={self.id}, discord_server_id={self.discord_server_id}, discord_user_id={self.discord_user_id})"
