@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session, contains_eager
 import os
 import discord
 from dotenv import load_dotenv
-from database.tables import Role, User, Nickname, Base, Blacklist, Log, userroles, usernicknames
+from database.tables import Role, User, Nickname, Base, Blacklist, Log, Patreon, userroles, usernicknames
 load_dotenv()
 
 class Database:
@@ -164,6 +164,39 @@ class Database:
 
         session.commit()
         session.close()
+
+    # Unlike the other fetches, this will return none if it doesn't exist.
+    def _fetch_patreon(self, session: Session, user: discord.User = None, guild: discord.Guild = None) -> Patreon | None:
+        if guild:
+            stmt = (
+                select(Patreon)
+                .where(Patreon.discord_server_id == guild.id)
+            )
+        elif user:
+            stmt = (
+                select(Patreon)
+                .where(Patreon.discord_user_id == user.id)
+            )
+        else:
+            return
+        
+        r = session.execute(stmt)
+        patreon = r.first()
+        if not patreon:
+            return None
+        else:
+            session.close()
+            return patreon[0]
+
+    def fetch_patreon(self, user: discord.User = None, guild: discord.Guild = None):
+        session = Session(self.engine)
+        return self._fetch_patreon(session, user, guild)
+
+    def is_server_patreon(self, guild: discord.Guild):
+        patreon = self.fetch_patreon(guild=guild)
+        if patreon:
+            return True
+        return False
 
     def user_count(self):
         session = Session(self.engine)
