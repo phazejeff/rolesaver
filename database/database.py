@@ -197,6 +197,36 @@ class Database:
         if patreon:
             return True
         return False
+    
+    def add_user_to_patreon(self, user: discord.User):
+        session = Session(self.engine)
+        patreon = self._fetch_patreon(session, user=user)
+        if patreon:
+            session.close()
+            return
+        
+        patreon = Patreon(user.id)
+        session.add(patreon)
+        session.close()
+
+    def update_patreon_user_guild(self, user: discord.User, guild: discord.Guild):
+        session = Session(self.engine)
+        patreon = self._fetch_patreon(session, user=user)
+        if patreon == None:
+            raise ValueError("User does not exist in db")
+        
+        patreon.discord_server_id = guild.id
+        session.execute()
+        session.close()
+
+    def remove_patreon_user(self, user: discord.User):
+        session = Session(self.engine)
+        patreon = self._fetch_patreon(session, user=user)
+        if patreon == None:
+            return
+        
+        session.delete(patreon)
+        session.close()
 
     def user_count(self):
         session = Session(self.engine)
