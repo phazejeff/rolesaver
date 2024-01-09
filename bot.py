@@ -1,6 +1,7 @@
 import discord
 import os
 from database.database import Database
+from patreon.patreon import Patreon
 
 intents = discord.Intents.default()
 intents.members = True
@@ -9,6 +10,7 @@ class RoleSaver(discord.AutoShardedClient):
     def __init__(self):
         super().__init__(intents=intents)
         self.database = Database()
+        self.patreon = Patreon()
         self.tree = discord.app_commands.CommandTree(self)
 
     # copies global commands to test server instantly

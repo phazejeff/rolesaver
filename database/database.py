@@ -213,10 +213,11 @@ class Database:
         session = Session(self.engine)
         patreon = self._fetch_patreon(session, user=user)
         if patreon == None:
-            raise ValueError("User does not exist in db")
+            patreon = Patreon(user.id)
+            session.add(patreon)
         
         patreon.discord_server_id = guild.id
-        session.execute()
+        session.commit()
         session.close()
 
     def remove_patreon_user(self, user: discord.User):
