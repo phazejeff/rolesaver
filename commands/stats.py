@@ -2,6 +2,7 @@ import discord
 from bot import rolesaver
 
 @rolesaver.tree.command(name="stats", description="Shows the bot's global and server stats")
+@discord.app_commands.guild_only()
 async def stats(interaction: discord.Interaction):
     await interaction.response.defer(thinking=True)
     log = rolesaver.database.fetch_log(interaction.guild)

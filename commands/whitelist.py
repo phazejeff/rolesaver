@@ -5,6 +5,7 @@ from bot import rolesaver
 @rolesaver.tree.command(name="whitelist", description="View current whitelist, or add/remove a role to the whitelist.")
 @discord.app_commands.describe(role="Role to add/remove from whitelist. Leave blank to view current whitelist.")
 @discord.app_commands.default_permissions(manage_guild=True)
+@discord.app_commands.guild_only()
 async def whitelist(interaction: discord.Interaction, role: Optional[discord.Role]):
     await interaction.response.defer(thinking=True)
     blacklistdb = rolesaver.database.fetch_blacklist(interaction.guild)

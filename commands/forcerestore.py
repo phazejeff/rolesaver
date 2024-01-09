@@ -14,6 +14,7 @@ async def attempt_forcerestore(interaction: discord.Interaction, member: discord
 @discord.app_commands.describe(member="User to restore")
 @discord.app_commands.rename(member="user")
 @discord.app_commands.default_permissions(manage_roles=True)
+@discord.app_commands.guild_only()
 async def forcerestore(interaction: discord.Interaction, member: discord.Member):
     await interaction.response.defer(thinking=True)
     await attempt_forcerestore(interaction, member)

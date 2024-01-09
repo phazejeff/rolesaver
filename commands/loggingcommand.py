@@ -5,6 +5,7 @@ from bot import rolesaver
 @rolesaver.tree.command(name="logging", description="Enable/disable logging the saving/restoring of roles in this channel.")
 @discord.app_commands.describe(disable="Set to true to disable logging")
 @discord.app_commands.default_permissions(manage_guild=True)
+@discord.app_commands.guild_only()
 async def logging(interaction: discord.Interaction, disable: Optional[bool] = False):
     await interaction.response.defer(thinking=True)
     if disable:
