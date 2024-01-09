@@ -2,6 +2,7 @@ import discord
 import os
 from database.database import Database
 from patreon.patreon import Patreon
+from discord.ext import tasks
 
 intents = discord.Intents.default()
 intents.members = True
@@ -20,6 +21,7 @@ class RoleSaver(discord.AutoShardedClient):
         # self.tree.copy_global_to(guild=GUILD)
         # await self.tree.sync(guild=GUILD)
         await self.tree.sync()
+        self.remove_inactive_patreons.start()
     
     async def on_ready(self):
         print("Logged in as: " + self.user.name)
@@ -36,6 +38,16 @@ class RoleSaver(discord.AutoShardedClient):
                 return i[1]
             else:
                 return -1
+            
+    @tasks.loop(hours=24)
+    async def remove_inactive_patreons(self):
+        members_in_patreon = rolesaver.patreon.get_premium_members()
+        members_in_db = rolesaver.database.get_all_patreon_users()
+
+        for member in members_in_db:
+            member: Patreon = member[0]
+            if not member.discord_user_id in members_in_patreon:
+                rolesaver.database.remove_patreon_user(discord.Object(id=member.discord_user_id))
 
     def run(self):
         token = os.environ["DISCORD_TOKEN"]

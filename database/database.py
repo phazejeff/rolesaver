@@ -227,7 +227,15 @@ class Database:
             return
         
         session.delete(patreon)
+        session.commit()
         session.close()
+    
+    def get_all_patreon_users(self):
+        session = Session(self.engine)
+        stmt = select(Patreon)
+        r = session.execute(stmt)
+        return r.all()
+            
 
     def user_count(self):
         session = Session(self.engine)
