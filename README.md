@@ -1,4 +1,4 @@
-# Rolesaver
+# Role Saver
 Discord bot that saves and restores member roles when they leave and rejoin a server.
 
 # Hosting
