@@ -11,7 +11,7 @@ class Patreon:
 
     def __init__(self):
         self.TOKEN = os.environ["PATREON_TOKEN"]
-        tier_name = os.environ["PATREON_TIER_NAME"]
+        self.tier_ids = os.environ["PATREON_TIER_IDS"].split(",")
         self.campaign_id = self._get("/api/oauth2/v2/campaigns", params={
             "include" : "tiers",
             "fields[tier]" : "title"
@@ -30,10 +30,10 @@ class Patreon:
     def get_premium_members(self):
         url = f"/api/oauth2/v2/campaigns/{self.campaign_id}/members"
         params = {
-            "include": "currently_entitled_tiers",
+            "include": "currently_entitled_tiers,user",
             "fields[tier]" : "title",
             "fields[member]": "patron_status",
-            "include": "user",
+            # "include": "",
             "fields[user]" : "social_connections"
         }
 
@@ -41,10 +41,13 @@ class Patreon:
         
         active_ids = []
         next = True
-        
+
         while next:
             for member in res['data']:
-                if member['attributes']['patron_status'] == 'active_patron':
+                patron_status = member['attributes']['patron_status']
+                patron_tiers = member['relationships']['currently_entitled_tiers']['data'] # [{'id' : '00000', 'type' : 'tier'},]
+
+                if patron_status == 'active_patron' and [i['id'] for i in patron_tiers if i['id'] in self.tier_ids]: # 2nd part of this creates a new list based off the intersection of the two lists. if list is empty the if statement is false, because python
                     active_ids.append(member['relationships']['user']['data']['id'])
 
             try:
