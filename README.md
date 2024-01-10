@@ -84,4 +84,5 @@ For manually updating, you just need to run 3 commands:
 1. cd into your directory containing the repo
 2. Stop the current bot
 3. Pull the latest changes with `git pull` or redownload manually from github
-4. Start the bot
+4. Run `python3 -m pip install -r requirements.txt`
+5. Start the bot `python3 main.py`
