@@ -20,11 +20,11 @@ No matter your method of hosting, you need to create the bot account first.
 2. Create an empty directory and make a file in it called `docker-compose.yml`.
 
 3. Copy and paste the stuff from [my docker compose file](docker-compose.yml) into you `docker-compose.yml`.
-    - If you are already running a MySQL server, or you installed one manually, and don't need to spin up a new one, you can comment out or delete everything below [line 13](docker-compose.yml#13) and set the [MYSQL_HOST](docker-compose.yml#9) and [MYSQL_PASSWORD](docker-compose.yml#13) variables to your MySQL serer
+    - If you are already running a MySQL server, or you installed one manually, and don't need to spin up a new one, you can comment out or delete everything below [line 13](docker-compose.yml#L13) and set the [MYSQL_HOST](docker-compose.yml#L9) and [MYSQL_PASSWORD](docker-compose.yml#L13) variables to your MySQL serer
 
-4. Put your bot token you got from [creating the discord bot](#creating-the-discord-bot) and set it to the DISCORD_TOKEN variable in your [docker-compose.yml on line 8](docker-compose.yml#8)
+4. Put your bot token you got from [creating the discord bot](#creating-the-discord-bot) and set it to the DISCORD_TOKEN variable in your [docker-compose.yml on line 8](docker-compose.yml#L8)
 
-5. Set the password for your MySQL server at [MYSQL_PASSWORD on line 11](docker-compose.yml#11). Set that same password at [MYSQL_ROOT_PASSWORD on line 25](docker-compose.yml#25)
+5. Set the password for your MySQL server at [MYSQL_PASSWORD on line 11](docker-compose.yml#L11). Set that same password at [MYSQL_ROOT_PASSWORD on line 25](docker-compose.yml#L25)
 
 6. Save the file
 
