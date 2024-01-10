@@ -67,7 +67,36 @@ class Database:
         
     def fetch_member(self, member: discord.Member) -> User:
         session = Session(self.engine)
-        return self._fetch_member(session, member)
+        member = self._fetch_member(session, member)
+        return member
+    
+    def _fetch_user(self, session: Session, user: discord.User) -> User:
+        stmt = (
+            select(User)
+            .where(User.discord_id == user.id)
+            .join(User.roles)
+            .options(contains_eager(User.roles))
+        )
+
+        r = session.execute(stmt)
+        userdb = r.unique().first()
+
+        if not userdb:
+            userdb = User(user.id)
+            session.add(userdb)
+            return userdb
+        else:
+            return userdb[0]
+    
+    def fetch_user(self, user: discord.User) -> User:
+        session = Session(self.engine)
+        user = self._fetch_user(session, user)
+        return user
+    
+    def delete_user(self, user: discord.User):
+        session = Session(self.engine)
+        member = self._fetch_user(session, user)
+        session.delete(member)
 
     def _fetch_blacklist(self, session: Session, guild: discord.Guild) -> Blacklist:
         stmt = (
