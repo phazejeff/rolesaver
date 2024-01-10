@@ -45,6 +45,7 @@ class Database:
         user.nickname = nickname
 
         session.commit()
+        session.close()
 
     def _fetch_member(self, session: Session, member: discord.Member) -> User:
         stmt = (
@@ -68,6 +69,7 @@ class Database:
     def fetch_member(self, member: discord.Member) -> User:
         session = Session(self.engine)
         member = self._fetch_member(session, member)
+        session.close()
         return member
     
     def _fetch_user(self, session: Session, user: discord.User) -> User:
@@ -91,17 +93,19 @@ class Database:
     def fetch_user(self, user: discord.User) -> User:
         session = Session(self.engine)
         user = self._fetch_user(session, user)
+        session.close()
         return user
     
     def delete_user(self, user: discord.User):
         session = Session(self.engine)
         member = self._fetch_user(session, user)
         session.delete(member)
+        session.close()
 
     def _fetch_blacklist(self, session: Session, guild: discord.Guild) -> Blacklist:
         stmt = (
             select(Blacklist)
-            .where(Blacklist.discord_server_id == guild.id)
+            .where(Blacklist.discord_server_id == guild.id)  
         )
 
         r = session.execute(stmt)
@@ -117,6 +121,7 @@ class Database:
     def fetch_blacklist(self, guild: discord.Guild) -> Blacklist:
         session = Session(self.engine)
         blacklist = self._fetch_blacklist(session, guild)
+        session.close()
         return blacklist
     
     def insert_or_remove_into_blacklist(self, guild: discord.Guild, role: discord.Role) -> bool:
@@ -140,7 +145,7 @@ class Database:
             blacklist.roles.add(r)
 
         session.commit()
-
+        session.close()
         return added
     
     def switch_list(self, guild):
@@ -149,6 +154,7 @@ class Database:
         blacklist.roles.clear()
         blacklist.is_blacklist = not blacklist.is_blacklist
         session.commit()
+        session.close()
 
     def _fetch_log(self, session: Session, guild: discord.Guild) -> Log:
         stmt = (
@@ -168,6 +174,7 @@ class Database:
     def fetch_log(self, guild: discord.Guild):
         session = Session(self.engine)
         log = self._fetch_log(session, guild)
+        session.close()
         return log
     
     def disable_logging(self, guild: discord.Guild):
@@ -176,6 +183,7 @@ class Database:
         log.is_logging = False
 
         session.commit()
+        session.close()
     
     def enable_logging(self, guild: discord.Guild, channel: discord.TextChannel):
         session = Session(self.engine)
@@ -184,30 +192,36 @@ class Database:
         log.is_logging = True
 
         session.commit()
+        session.close()
 
     def user_count(self):
         session = Session(self.engine)
         count = session.query(func.count(User.id)).scalar()
+        session.close()
         return count
     
     def role_count(self):
         session = Session(self.engine)
         count = session.query(func.count(Role.id)).scalar()
+        session.close()
         return count
     
     # since every user gets nickname saved, even if null, this is an accurate count for members
     def nickname_count(self):
         session = Session(self.engine)
         count = session.query(func.count()).select_from(usernicknames).scalar()
+        session.close()
         return count
     
     def member_count(self, guild: discord.Guild):
         session = Session(self.engine)
         count = session.query(func.count()).select_from(User).join(User.nickname).where(Nickname.discord_server_id == guild.id).scalar()
+        session.close()
         return count
     
     def guild_role_count(self, guild: discord.Guild):
         session = Session(self.engine)
         count = session.query(func.count()).select_from(Role).where(Role.discord_server_id == guild.id).scalar()
+        session.close()
         return count
     

@@ -12,7 +12,7 @@ class Blacklist(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     discord_server_id: Mapped[int] = mapped_column(BigInteger())
     is_blacklist: Mapped[bool] = mapped_column(default=True)
-    roles: Mapped[Set[Role] | None] = relationship(secondary=blacklistroles)
+    roles: Mapped[Set[Role] | None] = relationship(secondary=blacklistroles, lazy='subquery')
 
     def __init__(self, discord_server_id: int):
         self.discord_server_id = discord_server_id
