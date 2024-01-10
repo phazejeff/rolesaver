@@ -2,23 +2,25 @@
 Discord bot that saves and restores member roles when they leave and rejoin a server.
 
 # Hosting
+First you need to [Create a Discord Bot](#creating-the-discord-bot)
 
-There are 2 ways you can host this - either via Docker or the old fashion python way.
+After, there are 2 ways to run the bot - either via [Docker](#docker) or the [old fashion python way](#classic-python-way).
 
 ## Creating the Discord Bot
 No matter your method of hosting, you need to create the bot account first.
+
 1. Create a Discord Bot in the [Discord Developers Portal](https://discord.com/developers/applications). You can do so by going to Applications, creating a new Application, going to Bot and creating a new bot.
 2. Save the token that it gives you.
 3. Under "Privileged Gateway Intents" make sure "Server Members Intent" is selected.
 4. Invite your bot to your server by using this link, replacing APPLICATION_ID with the application ID of your bot found under General Information: https://discord.com/oauth2/authorize?client_id=`APPLICATION_ID`&scope=bot&permissions=2550138912
 
 ## Docker
-1. First, you will obviously need to install (Docker)[https://docs.docker.com/engine/install/]
+1. First, you will obviously need to install [Docker](https://docs.docker.com/engine/install/)
 
 2. Create an empty directory and make a file in it called `docker-compose.yml`.
 
 3. Copy and paste the stuff from [my docker compose file](docker-compose.yml) into you `docker-compose.yml`.
- - If you are already running a MySQL server, or you installed one manually, and don't need to spin up a new one, you can comment out or delete everything below [line 13](docker-compose.yml#13) and set the [MYSQL_HOST](docker-compose.yml#9) and [MYSQL_PASSWORD](docker-compose.yml#13) variables to your MySQL serer
+    - If you are already running a MySQL server, or you installed one manually, and don't need to spin up a new one, you can comment out or delete everything below [line 13](docker-compose.yml#13) and set the [MYSQL_HOST](docker-compose.yml#9) and [MYSQL_PASSWORD](docker-compose.yml#13) variables to your MySQL serer
 
 4. Put your bot token you got from [creating the discord bot](#creating-the-discord-bot) and set it to the DISCORD_TOKEN variable in your [docker-compose.yml on line 8](docker-compose.yml#8)
 
