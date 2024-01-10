@@ -62,20 +62,50 @@ class Database:
         if not user:
             user = User(member.id)
             session.add(user)
-            session.close()
             return user
         else:
-            session.close()
             return user[0]
         
     def fetch_member(self, member: discord.Member) -> User:
         session = Session(self.engine)
-        return self._fetch_member(session, member)
+        member = self._fetch_member(session, member)
+        session.close()
+        return member
+    
+    def _fetch_user(self, session: Session, user: discord.User) -> User:
+        stmt = (
+            select(User)
+            .where(User.discord_id == user.id)
+            .join(User.roles)
+            .options(contains_eager(User.roles))
+        )
+
+        r = session.execute(stmt)
+        userdb = r.unique().first()
+
+        if not userdb:
+            userdb = User(user.id)
+            session.add(userdb)
+            return userdb
+        else:
+            return userdb[0]
+    
+    def fetch_user(self, user: discord.User) -> User:
+        session = Session(self.engine)
+        user = self._fetch_user(session, user)
+        session.close()
+        return user
+    
+    def delete_user(self, user: discord.User):
+        session = Session(self.engine)
+        member = self._fetch_user(session, user)
+        session.delete(member)
+        session.close()
 
     def _fetch_blacklist(self, session: Session, guild: discord.Guild) -> Blacklist:
         stmt = (
             select(Blacklist)
-            .where(Blacklist.discord_server_id == guild.id)
+            .where(Blacklist.discord_server_id == guild.id)  
         )
 
         r = session.execute(stmt)
@@ -84,15 +114,15 @@ class Database:
         if not blacklist:
             blacklist = Blacklist(guild.id)
             session.add(blacklist)
-            session.close()
             return blacklist
         else:
-            session.close()
             return blacklist[0]
 
     def fetch_blacklist(self, guild: discord.Guild) -> Blacklist:
         session = Session(self.engine)
-        return self._fetch_blacklist(session, guild)
+        blacklist = self._fetch_blacklist(session, guild)
+        session.close()
+        return blacklist
     
     def insert_or_remove_into_blacklist(self, guild: discord.Guild, role: discord.Role) -> bool:
         session = Session(self.engine)
@@ -116,7 +146,6 @@ class Database:
 
         session.commit()
         session.close()
-
         return added
     
     def switch_list(self, guild):
@@ -138,15 +167,15 @@ class Database:
         if not log:
             log = Log(guild.id)
             session.add(log)
-            session.close()
             return log
         else:
-            session.close()
             return log[0]
         
     def fetch_log(self, guild: discord.Guild):
         session = Session(self.engine)
-        return self._fetch_log(session, guild)
+        log = self._fetch_log(session, guild)
+        session.close()
+        return log
     
     def disable_logging(self, guild: discord.Guild):
         session = Session(self.engine)

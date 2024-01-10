@@ -14,8 +14,8 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     discord_id: Mapped[int] = mapped_column(BigInteger())
 
-    nickname: Mapped[Nickname | None] = relationship(secondary=usernicknames) 
-    roles: Mapped[Set[Role] | None] = relationship(secondary=userroles)
+    nickname: Mapped[Nickname | None] = relationship(secondary=usernicknames, lazy='subquery') 
+    roles: Mapped[Set[Role] | None] = relationship(secondary=userroles, lazy='subquery')
 
     def __init__(self, discord_id: int):
         self.discord_id = discord_id

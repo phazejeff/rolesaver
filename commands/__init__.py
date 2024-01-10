@@ -6,3 +6,4 @@ from .forcerestore import forcerestore
 from .stats import stats
 from .loggingcommand import logging
 from .activate import activate
+from .forgetme import forgetme
