@@ -12,7 +12,7 @@ No matter your method of hosting, you need to create the bot account first.
 1. Create a Discord Bot in the [Discord Developers Portal](https://discord.com/developers/applications). You can do so by going to Applications, creating a new Application, going to Bot and creating a new bot.
 2. Save the token that it gives you.
 3. Under "Privileged Gateway Intents" make sure "Server Members Intent" is selected.
-4. Invite your bot to your server by using this link, replacing APPLICATION_ID with the application ID of your bot found under General Information: https://discord.com/oauth2/authorize?client_id=`APPLICATION_ID`&scope=bot&permissions=2550138912
+4. Invite your bot to your server by using this link, replacing APPLICATION_ID with the application ID of your bot found under General Information: `https://discord.com/oauth2/authorize?client_id=APPLICATION_ID&scope=bot&permissions=2550138912`
 
 ## Docker
 1. First, you will obviously need to install [Docker](https://docs.docker.com/engine/install/)
