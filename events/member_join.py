@@ -30,4 +30,5 @@ async def restore_member(member: Member):
 
 @rolesaver.event
 async def on_member_join(member: Member):
-    await restore_member(member)
+    if rolesaver.database.is_server_patreon(member.guild):
+        await restore_member(member)

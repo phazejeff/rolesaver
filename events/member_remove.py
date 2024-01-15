@@ -13,4 +13,5 @@ async def save_member(member: Member):
 
 @rolesaver.event
 async def on_member_remove(member: Member):
-    await save_member(member)
+    if rolesaver.database.is_server_patreon(member.guild):
+        await save_member(member)
