@@ -6,7 +6,7 @@ async def save_member(member: Member):
     rolesaver.database.upsert_member(member)
 
     log = rolesaver.database.fetch_log(member.guild)
-    if log.is_logging:
+    if log.is_logging and False:
         current = round(time.time())
         channel: TextChannel = member.guild.get_channel_or_thread(log.log_channel)
         await channel.send(f"<t:{current}:R> {member.name}'s roles have been saved.")
