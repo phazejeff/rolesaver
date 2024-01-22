@@ -9,3 +9,4 @@
 /migrate_db.py
 /db
 /maintenance.py
+/status.txt
