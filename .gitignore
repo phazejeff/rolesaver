@@ -8,3 +8,4 @@
 /context/__pycache__
 /migrate_db.py
 /db
+/maintenance.py
