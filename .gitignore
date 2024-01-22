@@ -9,3 +9,5 @@
 /migrate_db.py
 /db
 /patreon/__pycache__
+/maintenance.py
+/status.txt

@@ -26,6 +26,20 @@ class RoleSaver(discord.AutoShardedClient):
     async def on_ready(self):
         print("Logged in as: " + self.user.name)
 
+    async def on_shard_ready(self, shard_id: int):
+        await self.update_presence()
+        print("Logged in as: " + self.user.name + " on shard " + str(shard_id))
+
+    async def on_shard_resumed(self, shard_id: int):
+        await self.update_presence()
+
+    async def update_presence(self):
+        f = open("status.txt")
+        status = f.read()
+        f.close()
+        game = discord.CustomActivity(status)
+        await rolesaver.change_presence(activity=game)
+
     async def fetch_command_by_name(self, name: str, guild: discord.Guild) -> discord.app_commands.AppCommand:
         commands = await self.tree.fetch_commands()
         for c in commands:
@@ -33,11 +47,8 @@ class RoleSaver(discord.AutoShardedClient):
                 return c
             
     def get_shard_latency(self, shard_id: int):
-        for i in self.latencies:
-            if i[0] == shard_id:
-                return i[1]
-            else:
-                return -1
+        shard = self.get_shard(shard_id)
+        return shard.latency
             
     @tasks.loop(hours=24)
     async def remove_inactive_patreons(self):
