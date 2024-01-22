@@ -29,11 +29,8 @@ class RoleSaver(discord.AutoShardedClient):
                 return c
             
     def get_shard_latency(self, shard_id: int):
-        for i in self.latencies:
-            if i[0] == shard_id:
-                return i[1]
-            else:
-                return -1
+        shard = self.get_shard(shard_id)
+        return shard.latency
 
     def run(self):
         token = os.environ["DISCORD_TOKEN"]
