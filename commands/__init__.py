@@ -8,3 +8,4 @@ from .loggingcommand import logging
 from .activate import activate
 from .forgetme import forgetme
 from .help import help
+from .premium import premium
