@@ -11,5 +11,6 @@ COPY events ./events
 COPY database ./database
 COPY context ./context
 COPY commands ./commands
+COPY patreon ./patreon
 
 CMD ["python3", "main.py"]
