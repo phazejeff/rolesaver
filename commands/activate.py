@@ -6,6 +6,9 @@ from bot import rolesaver
 @discord.app_commands.guild_only()
 async def activate(interaction: discord.Interaction):
     await interaction.response.defer(thinking=True)
+    if rolesaver.database.is_server_patreon(interaction.guild):
+        await interaction.followup.send(f"{interaction.guild.name} is already activated!")
+        return
     if rolesaver.patreon.is_member_premium(interaction.user):
         rolesaver.database.update_patreon_user_guild(interaction.user, interaction.guild)
         await interaction.followup.send(f"Premium is now activated on {interaction.guild.name}! Roles are now being saved.")
