@@ -14,6 +14,8 @@ async def restore_member(member: Member):
         if (blacklist.is_blacklist and role in blacklist.roles) or (not blacklist.is_blacklist and not role in blacklist.roles):
             continue
         role = member.guild.get_role(role.discord_role_id)
+        if role == None:
+            continue
         if role.is_premium_subscriber():
             continue # ignore nitro roles
 
