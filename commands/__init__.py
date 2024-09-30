@@ -5,6 +5,5 @@ from .forcesave import forcesave
 from .forcerestore import forcerestore
 from .stats import stats
 from .loggingcommand import logging
-from .forgetme import forgetme
 from .help import help
 from .premium import premium
