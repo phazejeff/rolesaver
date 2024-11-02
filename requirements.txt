@@ -3,3 +3,4 @@ python-dotenv
 mysqlclient
 SQLAlchemy
 requests
+audioop-lts
