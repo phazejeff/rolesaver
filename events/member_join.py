@@ -29,7 +29,7 @@ async def restore_member(member: Member):
         current = round(time.time())
         channel: TextChannel = member.guild.get_channel_or_thread(log.log_channel)
         if channel is None:
-            channel = member.guild.fetch_channel(log.log_channel)
+            channel = await member.guild.fetch_channel(log.log_channel)
         await channel.send(f"<t:{current}:R> {member.name}'s roles have been restored.")
 
 @rolesaver.event
