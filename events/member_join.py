@@ -22,7 +22,7 @@ async def restore_member(member: Member):
         if role and not role.is_default():
             roles.append(role)
     
-    await member.add_roles(*roles)
+    await member.add_roles(*roles, atomic=True)
 
     log = rolesaver.database.fetch_log(member.guild)
     if log.is_logging:
