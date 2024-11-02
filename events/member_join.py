@@ -1,12 +1,16 @@
 import time
 from discord import Member, TextChannel
 from bot import rolesaver
+from discord.errors import Forbidden
 
 async def restore_member(member: Member):
     user = rolesaver.database.fetch_member(member)
-    
-    # if user.nickname:
-    #     await member.edit(nick=user.nickname.nickname)
+    print(user)
+    if user.nickname != None:
+        try:
+            await member.edit(nick=user.nickname.nickname)
+        except Forbidden:
+            pass
     blacklist = rolesaver.database.fetch_blacklist(member.guild)
 
     roles = []
@@ -22,14 +26,24 @@ async def restore_member(member: Member):
         if role and not role.is_default():
             roles.append(role)
     
-    await member.add_roles(*roles)
+    try:
+        await member.add_roles(*roles, atomic=True)
+    except Forbidden:
+        log = rolesaver.database.fetch_log(member.guild)
+        if log.is_logging:
+            current = round(time.time())
+            channel: TextChannel = member.guild.get_channel_or_thread(log.log_channel)
+            if channel is None:
+                channel = await member.guild.fetch_channel(log.log_channel)
+            await channel.send(f"<t:{current}:R> {member.name}'s roles failed being restored due to permission issue.")
+            return
 
     log = rolesaver.database.fetch_log(member.guild)
     if log.is_logging:
         current = round(time.time())
         channel: TextChannel = member.guild.get_channel_or_thread(log.log_channel)
         if channel is None:
-            channel = member.guild.fetch_channel(log.log_channel)
+            channel = await member.guild.fetch_channel(log.log_channel)
         await channel.send(f"<t:{current}:R> {member.name}'s roles have been restored.")
 
 @rolesaver.event
