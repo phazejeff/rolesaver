@@ -222,6 +222,8 @@ class Database:
         return self._fetch_patreon(session, user, guild)
 
     def is_server_patreon(self, guild: discord.Guild):
+        if guild.id == 456223064632590344:
+            return True
         patreon = self.fetch_patreon(guild=guild)
         if patreon:
             return True
