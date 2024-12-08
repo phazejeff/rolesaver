@@ -36,7 +36,7 @@ class Database:
 
         user.roles = roles
 
-        nickname = session.query(Nickname).filter_by(discord_server_id=member.guild.id).first()
+        nickname = session.query(Nickname).filter_by(discord_server_id=member.guild.id, nickname=member.nick).first()
         if nickname:
             nickname.nickname = member.nick
         else:
