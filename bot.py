@@ -7,7 +7,7 @@ intents.members = True
 
 class RoleSaver(discord.AutoShardedClient):
     def __init__(self):
-        super().__init__(intents=intents, chunk_guilds_at_startup=False)
+        super().__init__(intents=intents)
         self.database = Database()
         self.tree = discord.app_commands.CommandTree(self)
 
