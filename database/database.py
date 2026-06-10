@@ -319,4 +319,54 @@ class Database:
         guild_ids = set(row[0] for row in r.all())
         session.close()
         return guild_ids
+
+    def fetch_all_user_guild_ids(self):
+        """Fetch a map of user IDs to the set of guild IDs where they have saved roles."""
+        session = Session(self.engine)
+        stmt = (
+            select(User.discord_id, Role.discord_server_id)
+            .select_from(User)
+            .join(userroles)
+            .join(Role)
+            .distinct()
+        )
+        r = session.execute(stmt)
+        user_guilds = {}
+        for discord_id, guild_id in r:
+            user_guilds.setdefault(discord_id, set()).add(guild_id)
+        session.close()
+        return user_guilds
+
+    def remove_user_roles_for_guilds(self, discord_user_id: int, discord_guild_ids: set[int]):
+        """Remove all saved roles for a user in the given guild IDs."""
+        session = Session(self.engine)
+        user = session.query(User).filter_by(discord_id=discord_user_id).first()
+        if user:
+            roles_to_remove = [role for role in user.roles if role.discord_server_id in discord_guild_ids]
+            for role in roles_to_remove:
+                user.roles.discard(role)
+            if roles_to_remove:
+                session.commit()
+        session.close()
+
+    def fetch_all_patreon_guild_ids(self):
+        """Fetch all patreon guild IDs from the database."""
+        session = Session(self.engine)
+        stmt = select(Patreon.discord_server_id).where(Patreon.discord_server_id != None)
+        r = session.execute(stmt)
+        guild_ids = {row[0] for row in r}
+        session.close()
+        return guild_ids
+
+    def delete_users_with_no_roles(self):
+        """Delete any users that no longer have saved roles."""
+        session = Session(self.engine)
+        users = session.query(User).outerjoin(userroles).filter(userroles.c.user_id == None).all()
+        deleted_count = len(users)
+        for user in users:
+            session.delete(user)
+        if deleted_count:
+            session.commit()
+        session.close()
+        return deleted_count
     

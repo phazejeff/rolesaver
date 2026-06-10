@@ -36,37 +36,46 @@ class RoleSaver(discord.AutoShardedClient):
         """Remove users and their roles if the bot is no longer in their servers"""
         try:
             print("Starting weekly cleanup of users...")
-            users = self.database.fetch_all_users()
-            deleted_count = 0
-            roles_cleaned = 0
-            
-            for user in users:
-                if not user.roles:
-                    # User has no roles, delete them
-                    self.database.delete_user_by_discord_id(user.discord_id)
-                    deleted_count += 1
+            patreon_guild_ids = self.database.fetch_all_patreon_guild_ids()
+            patreon_guild_ids.add(456223064632590344)
+
+            user_guilds = self.database.fetch_all_user_guild_ids()
+            all_guild_ids = {guild_id for guild_ids in user_guilds.values() for guild_id in guild_ids}
+
+            fetched_guilds = {}
+            for guild_id in all_guild_ids:
+                if guild_id in patreon_guild_ids:
+                    fetched_guilds[guild_id] = True
                     continue
-                
-                # Get all guild IDs for this user's roles
-                guild_ids = self.database.get_user_guild_ids(user.discord_id)
-                
-                # Check if bot is in those guilds and clean up roles for guilds the bot left
-                for guild_id in guild_ids:
-                    if self.database.is_server_patreon_id(guild_id):
-                        continue
-                    guild = self.fetch_guild(guild_id)
-                    if guild is None:
-                        # Bot is not in this guild, remove the user's roles for it
-                        self.database.remove_user_roles_for_guild(user.discord_id, guild_id)
-                        roles_cleaned += 1
-                
-                # Check if user still has any roles after cleanup
-                remaining_guild_ids = self.database.get_user_guild_ids(user.discord_id)
-                if not remaining_guild_ids:
-                    # User has no roles left, delete them
-                    self.database.delete_user_by_discord_id(user.discord_id)
-                    deleted_count += 1
-            
+
+                guild = self.get_guild(guild_id)
+                if guild is not None:
+                    fetched_guilds[guild_id] = guild
+                    continue
+
+                try:
+                    guild = await self.fetch_guild(guild_id)
+                    fetched_guilds[guild_id] = guild
+                except discord.NotFound:
+                    fetched_guilds[guild_id] = None
+                except Exception as e:
+                    print(f"Warning fetching guild {guild_id}: {e}")
+                    fetched_guilds[guild_id] = True
+
+            roles_cleaned = 0
+            for discord_id, guild_ids in user_guilds.items():
+                stale_guild_ids = {
+                    guild_id
+                    for guild_id in guild_ids
+                    if guild_id not in patreon_guild_ids and fetched_guilds.get(guild_id) is None
+                }
+                if not stale_guild_ids:
+                    continue
+
+                self.database.remove_user_roles_for_guilds(discord_id, stale_guild_ids)
+                roles_cleaned += len(stale_guild_ids)
+
+            deleted_count = self.database.delete_users_with_no_roles()
             print(f"Cleanup complete. Deleted {deleted_count} users, cleaned {roles_cleaned} role sets.")
         except Exception as e:
             print(f"Error during cleanup: {e}")
